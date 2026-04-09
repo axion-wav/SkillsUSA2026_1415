@@ -1,4 +1,4 @@
-# SkillsUSA2026 - Computer Programming
+# SkillsUSA2026 - Computer Programming (5 hours 30 minutes total)
 - Competitor Number: 1415
 - Python 3.14
 
