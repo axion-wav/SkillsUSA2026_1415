@@ -2,6 +2,8 @@
 
 import time, random
 
+# animate typing and treat '#' as a backspace while building final strings.
+
 s = "AAAA####SkXX##illsUSA"
 t = "Qqq###SSS###SkXYZ###illsUSA"
 
@@ -12,6 +14,8 @@ s_final = ""
 t_final = ""
 
 print("String S:")
+
+# simulate typing for s and keep track of the post-backspace result.
 
 for i, ch in enumerate(s_ch):
     if ch == '#':
@@ -30,6 +34,8 @@ for i, ch in enumerate(s_ch):
 
 print("\n\nString T:")
 
+# repeat the same simulation for t.
+
 for i, ch in enumerate(t_ch):
     if ch == '#':
         t_final = t_final[:-1]
@@ -45,6 +51,7 @@ for i, ch in enumerate(t_ch):
 
     time.sleep((random.random() * 0.5) + 0.1)
 
+# compare the typed results after all backspaces are applied.
 if s_final == t_final:
     print("\n\nTRUE. Results are equal.")
 else:

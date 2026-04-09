@@ -4,13 +4,19 @@ def sales():
     base = os.path.dirname(os.path.dirname(__file__))
     path = os.path.join(base, "data", "salesdata.json")
 
-    with open(path, "r") as file:
-        sales = json.load(file)
+    try:
+        with open(path, "r") as file:
+            sales = json.load(file)
+            if isinstance(sales, dict):
+                sales = [sales]
+    except (FileNotFoundError, json.JSONDecodeError):
+        sales = []
 
     total_rev = 0
 
     item_totals = {}
 
+    # aggregate totals by sku for the manager sales summary.
     for order in sales:
         total_rev += order["total"]
         for item in order["items"]:
@@ -36,6 +42,7 @@ def sales():
 
 
 def manager(inventory):
+    # prompt until valid admin credentials are entered.
     while True:
         un = input("Administrator username: ")
         if un == "admin":
@@ -55,13 +62,20 @@ def manager(inventory):
                                 price = input("\nPrice of the item: ")
                                 stock = input("\nQuantity of the item: ")
 
-                                new_sku = max(item["sku"] for item in inventory) + 1
+                                try:
+                                    price = float(price)
+                                    stock = int(stock)
+                                except ValueError:
+                                    print("Invalid price or quantity.")
+                                    continue
+
+                                new_sku = max((item["sku"] for item in inventory), default=0) + 1
 
                                 inventory.append({
                                     "sku": new_sku,
                                     "name": name,
-                                    "price": float(price),
-                                    "quantity": int(stock)
+                                    "price": price,
+                                    "quantity": stock
                                 })
 
                                 base = os.path.dirname(os.path.dirname(__file__))
@@ -74,9 +88,13 @@ def manager(inventory):
                             case "3":
                                 while True:
                                     for item in inventory:
-                                        print(f"SKU {item["sku"]}: {item["name"]} | Price: ${item["price"]} | Inventory: {item["quantity"]}")
+                                        print(f"SKU {item['sku']}: {item['name']} | Price: ${item['price']} | Inventory: {item['quantity']}")
 
-                                    sku = int(input("\nEnter an item SKU to remove: "))
+                                    try:
+                                        sku = int(input("\nEnter an item SKU to remove: "))
+                                    except ValueError:
+                                        print("Invalid SKU.")
+                                        continue
 
                                     if any(item["sku"] == sku for item in inventory):
                                         inventory[:] = [item for item in inventory if item["sku"] != sku]
@@ -94,24 +112,44 @@ def manager(inventory):
                             case "4":
                                 while True:
                                     for item in inventory:
-                                        print(f"SKU {item["sku"]}: {item["name"]} | Price: ${item["price"]} | Inventory: {item["quantity"]}")
+                                        print(f"SKU {item['sku']}: {item['name']} | Price: ${item['price']} | Inventory: {item['quantity']}")
 
-                                    sku = int(input("\nEnter an item SKU to edit: "))
+                                    try:
+                                        sku = int(input("\nEnter an item SKU to edit: "))
+                                    except ValueError:
+                                        print("Invalid SKU.")
+                                        continue
 
                                     if any(item["sku"] == sku for item in inventory):
+                                        # empty input keeps the original field value.
                                         name = input("\nName of the item (Enter for no change): ")
                                         price = input("\nPrice of the item (Enter for no change): ")
                                         stock = input("\nQuantity of the item (Enter for no change): ")
+
+                                        valid_edit = True
 
                                         for item in inventory:
                                             if item["sku"] == sku:
                                                 if name:
                                                     item["name"] = name
                                                 if price:
-                                                    item["price"] = float(price)
+                                                    try:
+                                                        item["price"] = float(price)
+                                                    except ValueError:
+                                                        print("Invalid price.")
+                                                        valid_edit = False
+                                                        break
                                                 if stock:
-                                                    item["quantity"] = int(stock)
+                                                    try:
+                                                        item["quantity"] = int(stock)
+                                                    except ValueError:
+                                                        print("Invalid quantity.")
+                                                        valid_edit = False
+                                                        break
                                                 break
+
+                                        if not valid_edit:
+                                            continue
 
                                         base = os.path.dirname(os.path.dirname(__file__))
                                         path = os.path.join(base, "data", "inventory_WORKING.json")

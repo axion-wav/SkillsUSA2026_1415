@@ -3,6 +3,7 @@
 
 from collections import deque
 
+# each queue entry stores (person_id, requested_seat).
 n = 8
 arr = [3, 3, 3, 1, 5, 5, 2, 8]
 
@@ -13,6 +14,7 @@ taken_seats = set()
 
 result = [None] * n
 
+# process requests in order; if a seat is taken, retry with the next seat number.
 while len(queue) > 0:
     person, seat = queue.popleft()
 

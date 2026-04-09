@@ -2,8 +2,9 @@ from menus.shop import shop
 from menus.checkout import checkout
 from menus.manager import manager
 
-import json, os
+import sys, json, os
 
+# load the shared inventory once at startup so all menus work on the same list object.
 base = os.path.dirname(__file__)
 path = os.path.join(base, "data", "inventory_WORKING.json")
 
@@ -13,6 +14,7 @@ with open(path, "r") as file:
 inventory = data["inventory"]
 
 def main():
+    # cart entries are managed by menu modules and passed between screens.
     cart = []
 
     while True:
