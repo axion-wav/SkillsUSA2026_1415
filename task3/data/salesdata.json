@@ -1,0 +1,21 @@
+[
+    {
+        "items": [
+            {
+                "sku": 1,
+                "name": "Wireless Mouse",
+                "quantity": 1,
+                "price": 29.99
+            },
+            {
+                "sku": 2,
+                "name": "Mechanical Keyboard",
+                "quantity": 1,
+                "price": 89.99
+            }
+        ],
+        "subtotal": 119.97999999999999,
+        "tax": 9.5984,
+        "total": 129.5784
+    }
+]
